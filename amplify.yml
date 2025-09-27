@@ -9,6 +9,7 @@ frontend:
   phases:
     build:
       commands:
+        - aws ssm get-parameter --name "/amplify/$AWS_APP_ID/$AWS_BRANCH/STRIPE_SECRET_KEY" --with-decryption --query "Parameter.Value" --output text | xargs -I {} echo "STRIPE_SECRET_KEY={}" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
