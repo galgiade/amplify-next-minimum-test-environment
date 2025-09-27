@@ -1,7 +1,4 @@
-import { connection } from "next/server";
-
 export default async function App() {
-  await connection()
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   
   return (
