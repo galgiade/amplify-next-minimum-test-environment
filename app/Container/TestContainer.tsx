@@ -41,15 +41,15 @@ export default async function TestContainer() {
 
   // サーバーサイド環境変数を取得
   const serverEnvVars = {
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? '***hidden***' : 'undefined',
-    NEXT_PUBLIC_STRIPE_SECRET_KEY: process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || 'undefined',
-    NODE_ENV: process.env.NODE_ENV || 'undefined'
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
+    NEXT_PUBLIC_STRIPE_SECRET_KEY: process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || '',
+    NODE_ENV: process.env.NODE_ENV || 'development'
   };
 
   return (
     <TestPresentation 
       apiResult={apiResult}
-      error={error}
+      error={error || ''}
       serverEnvVars={serverEnvVars}
     />
   );

@@ -7,8 +7,8 @@ import { validateEnvironmentVariables } from "../lib/env-validator";
 
 interface TestPresentationProps {
   apiResult: any;
-  error: string | null;
-  serverEnvVars?: {
+  error: string;
+  serverEnvVars: {
     STRIPE_SECRET_KEY: string;
     NEXT_PUBLIC_STRIPE_SECRET_KEY: string;
     NODE_ENV: string;
@@ -83,7 +83,6 @@ export default function TestPresentation({
           <h2 className="text-xl font-semibold mb-4">Server Side Environment Variables</h2>
           <div className="space-y-2">
             <p><strong>STRIPE_SECRET_KEY:</strong> {serverEnvVars.STRIPE_SECRET_KEY}</p>
-            <p><strong>NEXT_PUBLIC_STRIPE_SECRET_KEY:</strong> {serverEnvVars.NEXT_PUBLIC_STRIPE_SECRET_KEY}</p>
             <p><strong>NODE_ENV:</strong> {serverEnvVars.NODE_ENV}</p>
           </div>
         </div>
