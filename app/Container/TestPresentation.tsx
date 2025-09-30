@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { testPostAction } from "../lib/actions";
+import { testPostApi } from "../lib/api-client";
 
 interface TestPresentationProps {
   apiResult: any;
@@ -19,22 +21,30 @@ export default function TestPresentation({
 }: TestPresentationProps) {
   const [postResult, setPostResult] = useState<any>(null);
   const [postLoading, setPostLoading] = useState(false);
+  const [postMethod, setPostMethod] = useState<'server_action' | 'api_route'>('server_action');
 
-  const testPostApi = async () => {
+  const testPostServerAction = async () => {
     setPostLoading(true);
+    setPostMethod('server_action');
     try {
-      const response = await fetch('/api/test-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const data = await response.json();
-      setPostResult(data);
+      const result = await testPostAction();
+      setPostResult(result);
     } catch (error) {
-        setPostResult({ error: error instanceof Error ? error.message : 'Unknown error' });
-      } finally {
+      setPostResult({ error: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setPostLoading(false);
+    }
+  };
+
+  const testPostApiRoute = async () => {
+    setPostLoading(true);
+    setPostMethod('api_route');
+    try {
+      const result = await testPostApi();
+      setPostResult(result);
+    } catch (error) {
+      setPostResult({ error: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
       setPostLoading(false);
     }
   };
@@ -83,17 +93,35 @@ export default function TestPresentation({
       {/* POST APIテストボタン */}
       <div className="mb-8 p-4 border rounded-lg bg-green-50">
         <h2 className="text-xl font-semibold mb-4">POST API Test</h2>
-        <button
-          onClick={testPostApi}
-          disabled={postLoading}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-        >
-          {postLoading ? 'Loading...' : 'Test POST API'}
-        </button>
+        <div className="space-y-4">
+          <div className="flex gap-4">
+            <button
+              onClick={testPostServerAction}
+              disabled={postLoading}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            >
+              {postLoading && postMethod === 'server_action' ? 'Loading...' : 'Test Server Action'}
+            </button>
+            <button
+              onClick={testPostApiRoute}
+              disabled={postLoading}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+            >
+              {postLoading && postMethod === 'api_route' ? 'Loading...' : 'Test API Route'}
+            </button>
+          </div>
+          
+          <div className="text-sm text-gray-600">
+            <p><strong>Server Action:</strong> サーバーサイドで直接実行（推奨）</p>
+            <p><strong>API Route:</strong> クライアントサイドからAPIルートを呼び出し</p>
+          </div>
+        </div>
         
         {postResult && (
           <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">POST API Response</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              POST Response ({postMethod === 'server_action' ? 'Server Action' : 'API Route'})
+            </h3>
             <pre className="bg-gray-100 p-4 rounded overflow-auto">
               {JSON.stringify(postResult, null, 2)}
             </pre>
