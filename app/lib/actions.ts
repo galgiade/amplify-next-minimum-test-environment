@@ -8,6 +8,12 @@ export async function testPostAction() {
   console.log(`[${timestamp}] Server Action STRIPE_SECRET_KEY length:`, process.env.STRIPE_SECRET_KEY?.length || 0);
   console.log(`[${timestamp}] Server Action All STRIPE env vars:`, Object.keys(process.env).filter(key => key.includes('STRIPE')));
   console.log(`[${timestamp}] Server Action All env vars count:`, Object.keys(process.env).length);
+  
+  // 環境変数の詳細デバッグ
+  console.log(`[${timestamp}] All environment variables:`, Object.keys(process.env));
+  console.log(`[${timestamp}] Environment variables containing 'STRIPE':`, Object.keys(process.env).filter(key => key.toUpperCase().includes('STRIPE')));
+  console.log(`[${timestamp}] Environment variables containing 'SECRET':`, Object.keys(process.env).filter(key => key.toUpperCase().includes('SECRET')));
+  
   console.log(`[${timestamp}] === End Server Action Debug ===`);
 
   const debugInfo = {

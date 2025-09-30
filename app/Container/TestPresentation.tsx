@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { testPostAction } from "../lib/actions";
 import { testPostApi } from "../lib/api-client";
+import { validateEnvironmentVariables } from "../lib/env-validator";
 
 interface TestPresentationProps {
   apiResult: any;
@@ -22,6 +23,7 @@ export default function TestPresentation({
   const [postResult, setPostResult] = useState<any>(null);
   const [postLoading, setPostLoading] = useState(false);
   const [postMethod, setPostMethod] = useState<'server_action' | 'api_route'>('server_action');
+  const [envValidation, setEnvValidation] = useState<any>(null);
 
   const testPostServerAction = async () => {
     setPostLoading(true);
@@ -46,6 +48,15 @@ export default function TestPresentation({
       setPostResult({ error: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
       setPostLoading(false);
+    }
+  };
+
+  const validateEnv = async () => {
+    try {
+      const result = await validateEnvironmentVariables();
+      setEnvValidation(result);
+    } catch (error) {
+      setEnvValidation({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
 
@@ -115,6 +126,15 @@ export default function TestPresentation({
             <p><strong>Server Action:</strong> サーバーサイドで直接実行（推奨）</p>
             <p><strong>API Route:</strong> クライアントサイドからAPIルートを呼び出し</p>
           </div>
+          
+          <div className="mt-4">
+            <button
+              onClick={validateEnv}
+              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+            >
+              Validate Environment Variables
+            </button>
+          </div>
         </div>
         
         {postResult && (
@@ -125,6 +145,20 @@ export default function TestPresentation({
             <pre className="bg-gray-100 p-4 rounded overflow-auto">
               {JSON.stringify(postResult, null, 2)}
             </pre>
+          </div>
+        )}
+        
+        {envValidation && (
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Environment Validation Result</h3>
+            <div className={`p-4 rounded ${envValidation.isValid ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+              <p className={`font-semibold ${envValidation.isValid ? 'text-green-800' : 'text-red-800'}`}>
+                Status: {envValidation.isValid ? '✅ PASS' : '❌ FAIL'}
+              </p>
+              <pre className="bg-gray-100 p-4 rounded overflow-auto mt-2">
+                {JSON.stringify(envValidation, null, 2)}
+              </pre>
+            </div>
           </div>
         )}
       </div>
